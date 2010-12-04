@@ -2,7 +2,7 @@ package DBIx::TransactionManager;
 use strict;
 use warnings;
 use Carp ();
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub new {
     my ($class, $dbh) = @_;
@@ -159,7 +159,7 @@ nested transaction usage:
 =head1 DESCRIPTION
 
 DBIx::TransactionManager is a simple transaction manager.
-this module like  L<DBIx::Class::Storage::TxnScopeGuard>.
+like  L<DBIx::Class::Storage::TxnScopeGuard>.
 
 =head1 METHODS
 
