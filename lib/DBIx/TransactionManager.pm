@@ -2,7 +2,7 @@ package DBIx::TransactionManager;
 use strict;
 use warnings;
 use Carp ();
-our $VERSION = '1.00';
+our $VERSION = '1.01';
 
 sub new {
     my ($class, $dbh) = @_;
@@ -47,7 +47,6 @@ sub txn_commit {
     return unless $self->{active_transaction};
 
     if ( $self->{rollbacked_in_nested_transaction} ) {
-        $self->{dbh}->rollback;
         Carp::croak "tried to commit but already rollbacked in nested transaction.";
     }
     elsif ( $self->{active_transaction} > 1 ) {
@@ -89,7 +88,7 @@ sub DESTROY {
     my($dismiss, $klass) = @{ $_[0] };
     return if $dismiss;
 
-    Carp::carp('do rollback');
+    Carp::cluck('do rollback');
 
     try {
         $klass->txn_rollback;
