@@ -2,7 +2,7 @@ package DBIx::TransactionManager;
 use strict;
 use warnings;
 use Carp ();
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 sub new {
     my ($class, $dbh) = @_;
@@ -62,6 +62,8 @@ sub txn_end {
     $_[0]->{active_transaction} = 0;
     $_[0]->{rollbacked_in_nested_transaction} = 0;
 }
+
+sub in_transaction { $_[0]->{active_transaction} ? 1 : 0 }
 
 package DBIx::TransactionManager::ScopeGuard;
 use Try::Tiny;
@@ -194,6 +196,10 @@ Commit the transaction.
 =head2 $txn->rollback
 
 Rollback the transaction.
+
+=head2 $txn->in_transaction
+
+are you in transaction?
 
 =head1 AUTHOR
 
