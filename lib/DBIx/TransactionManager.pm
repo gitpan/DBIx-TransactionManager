@@ -2,7 +2,7 @@ package DBIx::TransactionManager;
 use strict;
 use warnings;
 use Carp ();
-our $VERSION = '1.03';
+our $VERSION = '1.04';
 
 sub new {
     my ($class, $dbh) = @_;
@@ -90,7 +90,7 @@ sub DESTROY {
     my($dismiss, $obj) = @{ $_[0] };
     return if $dismiss;
 
-    Carp::cluck('do rollback');
+    Carp::cluck( "Transaction was aborted without calling an explicit commit or rollback." );
 
     try {
         $obj->txn_rollback;
