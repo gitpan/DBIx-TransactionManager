@@ -2,7 +2,7 @@ package DBIx::TransactionManager;
 use strict;
 use warnings;
 use Carp ();
-our $VERSION = '1.08';
+our $VERSION = '1.09';
 
 sub new {
     my ($class, $dbh) = @_;
@@ -27,9 +27,12 @@ sub txn_begin {
 
     my $caller = $args{caller} || [ caller(0) ];
     my $txns   = $self->{active_transactions};
-    push @$txns, { caller => $caller, pid => $$ };
-    if (@$txns == 1) {
-        $self->{dbh}->begin_work;
+    my $rc = 1;
+    if (@$txns == 0) {
+        $rc = $self->{dbh}->begin_work;
+    }
+    if ($rc) {
+        push @$txns, { caller => $caller, pid => $$ };
     }
 }
 
