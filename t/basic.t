@@ -97,6 +97,40 @@ subtest "don't block subsequent calls upon failing to execute begin_work (RaiseE
     }
 };
 
+subtest 'do basic transaction with AutoCommit: 0' => sub {
+    my $dbh = t::Utils::setup;
+    $dbh->{AutoCommit} = 0;
+    my $tm = DBIx::TransactionManager->new($dbh);
+
+    $tm->txn_begin;
+    
+        $dbh->do("insert into foo (id, var) values (666,'baz')");
+
+    $tm->txn_commit;
+
+    my $row = $dbh->selectrow_hashref('select * from foo where id = 666');
+    is $row->{id},  666;
+    is $row->{var}, 'baz';
+
+    $dbh->disconnect;
+};
+
+subtest 'do basic transaction with AutoCommit: 0 and rollback' => sub {
+    my $dbh = t::Utils::setup;
+    $dbh->{AutoCommit} = 0;
+    my $tm = DBIx::TransactionManager->new($dbh);
+
+    $tm->txn_begin;
+    
+        $dbh->do("insert into foo (id, var) values (666,'baz')");
+
+    $tm->txn_rollback;
+
+    ok not $dbh->selectrow_hashref('select * from foo where id = 666');
+
+    $dbh->disconnect;
+};
+
 done_testing;
 
 

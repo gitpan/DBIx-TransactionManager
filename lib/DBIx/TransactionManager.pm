@@ -2,7 +2,7 @@ package DBIx::TransactionManager;
 use strict;
 use warnings;
 use Carp ();
-our $VERSION = '1.09';
+our $VERSION = '1.11';
 
 sub new {
     my ($class, $dbh) = @_;
@@ -28,7 +28,7 @@ sub txn_begin {
     my $caller = $args{caller} || [ caller(0) ];
     my $txns   = $self->{active_transactions};
     my $rc = 1;
-    if (@$txns == 0) {
+    if (@$txns == 0 && $self->{dbh}->FETCH('AutoCommit')) {
         $rc = $self->{dbh}->begin_work;
     }
     if ($rc) {
